@@ -38,6 +38,33 @@ $hotels = [
   ],
 ]; ?>
 
+<?php
+$filtered_hotels = [];
+$count = 0;
+
+$parking_filter = $_GET['parking'] ?? '';
+$vote_filter = $_GET['vote'] ?? '';
+
+foreach ($hotels as $hotel) {
+  if ($parking_filter !== '') {
+    $has_parking = $parking_filter === '1';
+
+    if ($hotel['parking'] !== $has_parking) {
+      continue;
+    }
+  }
+
+  if ($vote_filter !== '') {
+    if ($hotel['vote'] < intval($vote_filter)) {
+      continue;
+    }
+  }
+
+  $filtered_hotels[] = $hotel;
+  $count++;
+}
+?>
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -90,38 +117,73 @@ $hotels = [
   <body>
     <div class="container mt-5">
       <h1 class="mb-4 text-center">HOTELS</h1>
-      <table class="table table-striped table-hover table-bordered text-center align-middle table-responsive">
-        <thead class="table-success">
-          <tr>
-            <th scope="col">#</th>
-            <?php foreach ($hotels[0] as $key => $value) {
-              $key = strtoupper(str_replace('_', ' ', $key));
-              echo "<th scope=\"col\">$key</th>";
+
+      <form method="GET" class="row g-3 mb-4">
+      <div class="col-12 col-md-6">
+        <label for="parking" class="form-label">Parcheggio</label>
+        <select name="parking" id="parking" class="form-select">
+          <option value="">Tutti</option>
+          <option value="1" <?php echo $parking_filter === '1' ? 'selected' : ''; ?>>
+            Con parcheggio
+          </option>
+          <option value="0" <?php echo $parking_filter === '0' ? 'selected' : ''; ?>>
+            Senza parcheggio
+          </option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <label for="vote" class="form-label">Voto minimo</label>
+        <select name="vote" id="vote" class="form-select">
+          <option value="">Tutti</option>
+          <?php for ($i = 1; $i <= 5; $i++) { ?>
+            <option value="<?php echo $i; ?>" <?php echo $vote_filter == $i ? 'selected' : ''; ?>>
+              <?php echo $i; ?> stelle o più
+            </option>
+          <?php } ?>
+        </select>
+      </div>
+
+      <div class="col-12 d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Filtra</button>
+        <a href="index.php" class="btn btn-secondary">Reset</a>
+      </div>
+    </form>
+      <?php if ($count > 0) { ?>
+        <table class="table table-striped table-hover table-bordered text-center align-middle table-responsive">
+          <thead class="table-success">
+            <tr>
+              <th scope="col">#</th>
+              <?php foreach ($filtered_hotels[0] as $key => $value) {
+                $key = strtoupper(str_replace('_', ' ', $key));
+                echo "<th scope=\"col\">$key</th>";
+              } ?>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($filtered_hotels as $index => $hotel) {
+              echo '<tr>';
+              echo "<th scope=\"row\">" . $index + 1 . '</th>';
+              foreach ($hotel as $key => $value) {
+                if ($key === 'parking') {
+                  $value = $value
+                    ? '<span class="badge bg-success">Yes</span>'
+                    : '<span class="badge bg-danger">No</span>';
+                }
+                if ($key === 'vote') {
+                  $value = str_repeat('⭐', $value);
+                }
+                echo "<td>$value</td>";
+              }
+              echo '</tr>';
             } ?>
-          </tr>
-        </thead>
-        <tbody>
-          <?php
-          $count = 0;
-          foreach ($hotels as $index => $hotel) {
-            echo '<tr>';
-            echo "<th scope=\"row\">" . $index + 1 . '</th>';
-            foreach ($hotel as $key => $value) {
-              if ($key == 'parking') {
-                $value = $value
-                  ? '<span class="badge bg-success">Yes</span>'
-                  : '<span class="badge bg-danger">No</span>';
-              }
-              if ($key == 'vote') {
-                $value = str_repeat('⭐', $value);
-              }
-              echo "<td>$value</td>";
-            }
-            echo '</tr>';
-          }
-          ?>
-          </tbody>
-      </table>
+            </tbody>
+        </table>
+      <?php } else { ?>
+        <p>Non ci sono risultati da visualizzare.</p>
+      <?php } ?>
+
+      
     </div>
     <!-- <h1>HOTELS</h1> -->
     <!-- <?php foreach ($hotels as $hotel) {
