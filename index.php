@@ -86,8 +86,6 @@ $hotels = [
     <!-- Stylesheet -->
     <!-- <link rel="stylesheet" href="css/style.css" /> -->
 
-    <!-- AXIOS (HTTP client) -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
   </head>
   <body>
     <div class="container mt-5">
