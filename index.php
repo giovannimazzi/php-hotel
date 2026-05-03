@@ -73,12 +73,12 @@ $hotels = [
     /> -->
 
     <!-- Bootstrap CSS -->
-    <!--  <link
+     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
       crossorigin="anonymous"
-    /> -->
+    />
 
     <!-- Reset Style -->
     <!-- <link rel="stylesheet" href="css/reset_style.css" /> -->
@@ -86,24 +86,51 @@ $hotels = [
     <!-- Stylesheet -->
     <!-- <link rel="stylesheet" href="css/style.css" /> -->
 
-    <!-- Bootstrap JS -->
-    <!--     <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-      crossorigin="anonymous"
-      defer="true"
-    ></script> -->
-
     <!-- AXIOS (HTTP client) -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
   </head>
   <body>
-    <h1>HOTELS</h1>
-    <?php foreach ($hotels as $hotel) {
+    <div class="container mt-5">
+      <h1 class="mb-4 text-center">HOTELS</h1>
+      <table class="table table-striped table-hover table-bordered text-center align-middle table-responsive">
+        <thead class="table-success">
+          <tr>
+            <th scope="col">#</th>
+            <?php foreach ($hotels[0] as $key => $value) {
+              $key = strtoupper(str_replace('_', ' ', $key));
+              echo "<th scope=\"col\">$key</th>";
+            } ?>
+          </tr>
+        </thead>
+        <tbody>
+          <?php
+          $count = 0;
+          foreach ($hotels as $index => $hotel) {
+            echo '<tr>';
+            echo "<th scope=\"row\">" . $index + 1 . '</th>';
+            foreach ($hotel as $key => $value) {
+              if ($key == 'parking') {
+                $value = $value
+                  ? '<span class="badge bg-success">Yes</span>'
+                  : '<span class="badge bg-danger">No</span>';
+              }
+              if ($key == 'vote') {
+                $value = str_repeat('⭐', $value);
+              }
+              echo "<td>$value</td>";
+            }
+            echo '</tr>';
+          }
+          ?>
+          </tbody>
+      </table>
+    </div>
+    <!-- <h1>HOTELS</h1> -->
+    <!-- <?php foreach ($hotels as $hotel) {
       foreach ($hotel as $key => $value) {
         echo "$key -> $value <br/>";
       }
       echo '<br/>';
-    } ?>
+    } ?> -->
   </body>
 </html>
